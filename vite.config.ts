@@ -20,7 +20,7 @@ export default defineConfig({
   plugins: [vue(), Components(componentsConfig), AutoImport(autoImportConfig)],
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "src"),
+      "@": path.resolve(__dirname, "src/"),
     },
   },
 });
