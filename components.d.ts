@@ -5,9 +5,7 @@ import '@vue/runtime-core'
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
-    GanttChar: typeof import('./src/components/gantt/GanttChar.vue')['default']
-    GanttChart: typeof import('./src/components/gantt/GanttChart.vue')['default']
-    GanttTable: typeof import('./src/components/gantt/GanttTable.vue')['default']
+    GanttTable: typeof import(./src/components/gantt/GanttChart.vueue')['default']
     GanttView: typeof import('./src/components/gantt/GanttView.vue')['default']
     TableView: typeof import('./src/components/table/TableView.vue')['default']
   }
