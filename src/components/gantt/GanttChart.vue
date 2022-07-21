@@ -10,7 +10,10 @@
         <div class="svg-container">
           <template v-for="(svg, index) in svgList" :key="index">
             <svg width="100%" height="40px">
-              <rect :x="svg.position" y="10" :width="svg.width" height="20" style="stroke: #70d5dd; fill: #dd524b"></rect>
+              <template v-for="(task, index) in svg.taskList" :key="index">
+                <rect cx="4" cy="4" :x="task.position" y="10" :width="task.width" height="20" style="stroke: #70d5dd; fill: transparent"></rect>
+                <text :x="task.position - 10" y="25" font-size="20" fill="orange">!</text>
+              </template>
             </svg>
           </template>
         </div>
@@ -41,7 +44,7 @@ const addHour = (unix: number, hour: number) => {
 };
 
 // 设置时间间隔/h
-const timeInterval = ref(2);
+const timeInterval = ref(1);
 // 设置每块宽度
 const blockWidth = ref(200);
 
@@ -51,6 +54,12 @@ const allTime = computed(() => {
     return {
       startTime: dayjs(item.startTime).unix(),
       endTime: dayjs(item.endTime).unix(),
+      taskList: item.taskList.map((item) => {
+        return {
+          startTime: dayjs(item.startTime).unix(),
+          endTime: dayjs(item.endTime).unix(),
+        };
+      }),
     };
   });
 });
@@ -126,6 +135,14 @@ const svgList = computed(() => {
     const obj = {
       width: (item.endTime - item.startTime) * secondWidth.value,
       position: 0.5 * blockWidth.value + (item.startTime - minTime.value) * secondWidth.value,
+      taskList: item.taskList.map((task) => {
+        const obj = {
+          width: (task.endTime - task.startTime) * secondWidth.value,
+          position: 0.5 * blockWidth.value + (task.startTime - minTime.value) * secondWidth.value,
+          isWarning: true,
+        };
+        return obj;
+      }),
     };
     return obj;
   });
@@ -185,7 +202,6 @@ const syncY = (top: number, domList: HTMLElement[]) => {
     width: 100%;
     height: 40px;
     display: flex;
-    border-bottom: 1px solid #e8eaec;
     flex: none;
     box-sizing: border-box;
     overflow-x: auto;
@@ -198,6 +214,8 @@ const syncY = (top: number, domList: HTMLElement[]) => {
       font-size: 12px;
       padding-top: 10px;
       text-align: center;
+      background: no-repeat left top/100% 8px;
+      background-image: linear-gradient(90deg, transparent, transparent 100px, #e8eaec 100px, #e8eaec 101px, transparent 101px, transparent);
     }
   }
   &-body {

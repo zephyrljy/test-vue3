@@ -1,6 +1,6 @@
 <template>
   <div class="gantt-view">
-    <GanttTable @scroll-y="handleScrollYEvent($event, 'table')" ref="tableRef" :option="option" :data="data"></GanttTable>
+    <GanttTable @scroll-y="handleScrollYEvent($event, 'table')" ref="tableRef" :option="props.option" :data="props.data"></GanttTable>
     <GanttChart ref="chartRef" :data="data" @scroll-y="handleScrollYEvent($event, 'chart')"></GanttChart>
   </div>
 </template>
@@ -8,47 +8,13 @@
 <script setup lang="ts">
 import dayjs from "dayjs";
 
-const option: { columns: TableColumns[] } = {
-  columns: [
-    {
-      title: "姓名",
-      field: "name",
-      width: 100,
-    },
-    {
-      title: "开始时间",
-      field: "startTime",
-    },
-    {
-      title: "开始时间",
-      field: "startTime",
-    },
-  ],
-};
-const data = ref([
-  {
-    name: "兵三号卫星",
-    startTime: "2022-01-01 00:00:00",
-    endTime: "2022-01-01 23:59:59",
-  },
-  {
-    name: "兵三号卫星",
-    startTime: "2022-01-01 00:00:00",
-    endTime: "2022-01-01 23:59:59",
-  },
-]);
-
-const getRandomTimeByRang = (type: number) => {
-  const time1 = dayjs("2022-01-01 00:00:00").unix();
-  const time2 = dayjs("2022-01-01 12:00:00").unix();
-  const time3 = dayjs("2022-01-01 24:00:00").unix();
-
-  if (type === 0) {
-    return dayjs.unix(Math.random() * (time2 - time1) + time1).format("YYYY-MM-DD HH:mm:ss");
-  } else {
-    return dayjs.unix(Math.random() * (time3 - time2) + time2).format("YYYY-MM-DD HH:mm:ss");
-  }
-};
+const props = withDefaults(
+  defineProps<{
+    option: { columns: TableColumns };
+    data: any;
+  }>(),
+  {}
+);
 
 const tableRef = ref();
 const chartRef = ref();
@@ -59,15 +25,6 @@ const handleScrollYEvent = (y, type) => {
     tableRef.value.setScrollY(y);
   }
 };
-
-for (let i = 0; i < 30; i++) {
-  const obj = {
-    name: "卫星",
-    startTime: getRandomTimeByRang(0),
-    endTime: getRandomTimeByRang(1),
-  };
-  data.value.push(obj);
-}
 </script>
 
 <style scoped lang="scss">
