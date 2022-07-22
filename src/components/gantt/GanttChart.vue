@@ -8,13 +8,25 @@
       </div>
       <div class="gantt-chart-body" @scroll.native="handleScrollEvent($event, 'y')" ref="ganttChartBodyRef" :style="headerStyle">
         <div class="svg-container">
+          <current-line :minTime="minTime" :secondWidth="secondWidth"></current-line>
+
           <template v-for="(svg, index) in svgList" :key="index">
-            <svg width="100%" height="40px">
-              <template v-for="(task, index) in svg.taskList" :key="index">
-                <rect cx="4" cy="4" :x="task.position" y="10" :width="task.width" height="20" style="stroke: #70d5dd; fill: transparent"></rect>
-                <text :x="task.position - 10" y="25" font-size="20" fill="orange">!</text>
+            <div class="gantt-chart-item">
+              <template v-for="(task, tIndex) in svg.taskList" :key="tIndex">
+                <a-popover :title="task.title || '任务名'" placement="right">
+                  <template #content>
+                    <div>
+                      <div>开始时间:{{ task.startTime }}</div>
+                      <div>结束时间:{{ task.endTime }}</div>
+                      <div :style="{ color: task.isWarning ? '#f9a647' : '#333', textIndent: '2em' }">状态:{{ task.isWarning ? "逾期警告" : "正常" }}</div>
+                    </div>
+                  </template>
+                  <div ref="rectRef" @click="handleClick(index * 10 + tIndex)" class="gantt-chart-item-bar" :style="{ width: `${task.width}px`, left: `${task.position}px` }">
+                    <div v-if="task.isWarning" style="transform: translateX(-15px); font-size: 16px; color: #f9a647; line-height: 20px">!</div>
+                  </div>
+                </a-popover>
               </template>
-            </svg>
+            </div>
           </template>
         </div>
       </div>
@@ -30,6 +42,23 @@
 
 <script setup lang="ts">
 import dayjs from "dayjs";
+
+// 点击变色
+const handleClick = (index) => {
+  if (highLight[index]) {
+    highLight[index] = false;
+  } else {
+    highLight[index] = true;
+  }
+};
+const highLight: any = reactive({});
+const rectRef = ref();
+watchEffect(() => {
+  Object.keys(highLight).forEach((key) => {
+    const color = highLight[key] ? "#0f505e" : "transparent";
+    rectRef.value[key].style.backgroundColor = color;
+  });
+});
 
 const props = withDefaults(defineProps<{ data: any }>(), {});
 
@@ -139,7 +168,9 @@ const svgList = computed(() => {
         const obj = {
           width: (task.endTime - task.startTime) * secondWidth.value,
           position: 0.5 * blockWidth.value + (task.startTime - minTime.value) * secondWidth.value,
-          isWarning: true,
+          isWarning: Math.random() > 0.8,
+          startTime: dayjs.unix(task.startTime).format("YYYY-MM-DD HH:mm:ss"),
+          endTime: dayjs.unix(task.endTime).format("YYYY-MM-DD HH:mm:ss"),
         };
         return obj;
       }),
@@ -226,11 +257,26 @@ const syncY = (top: number, domList: HTMLElement[]) => {
       display: none;
     }
     .svg-container {
+      position: relative;
       background: repeat left top/200px 40px;
       background-image: linear-gradient(180deg, transparent, transparent 39px, #e8eaec 39px, #e8eaec 40px), linear-gradient(90deg, transparent, transparent 199px, #e8eaec, 199px, #e8eaec 200px);
       display: flex;
       flex-flow: column nowrap;
     }
   }
+}
+
+.gantt-chart-item {
+  height: 40px;
+  position: relative;
+}
+.gantt-chart-item-bar {
+  top: 50%;
+  transform: translateY(-50%);
+  border-radius: 4px;
+  height: 20px;
+  position: absolute;
+  box-sizing: border-box;
+  border: 1px solid #0f505e;
 }
 </style>

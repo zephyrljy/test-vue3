@@ -9,24 +9,16 @@ const data = ref([]);
 const option: { columns: TableColumns[] } = {
   columns: [
     {
-      title: "姓名",
+      title: "卫星名",
       field: "name",
       width: 100,
-    },
-    {
-      title: "开始时间",
-      field: "startTime",
-    },
-    {
-      title: "开始时间",
-      field: "startTime",
     },
   ],
 };
 
-const timeOne = "2022-01-01 00:00:00";
-const timeTwo = "2022-01-01 12:00:00";
-const timeThree = "2022-01-01 24:00:00";
+const timeOne = dayjs().format("YYYY-MM-DD HH:mm:ss");
+const timeTwo = dayjs(timeOne).add(12, "h").format("YYYY-MM-DD HH:mm:ss");
+const timeThree = dayjs(timeOne).add(24, "h").format("YYYY-MM-DD HH:mm:ss");
 
 const getRandomTimeByRang = (time1 = timeOne, time2 = timeTwo) => {
   return dayjs.unix(dayjs(time1).unix() + Math.random() * (dayjs(time2).unix() - dayjs(time1).unix())).format("YYYY-MM-DD HH:mm:ss");

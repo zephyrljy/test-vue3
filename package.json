@@ -8,6 +8,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "ant-design-vue": "3.2.9",
     "dayjs": "^1.11.3",
     "vue": "^3.2.25",
     "vxe-table": "^4.2.8",

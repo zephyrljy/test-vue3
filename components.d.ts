@@ -5,6 +5,9 @@ import '@vue/runtime-core'
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
+    AButton: typeof import('ant-design-vue/es')['Button']
+    APopover: typeof import('ant-design-vue/es')['Popover']
+    CurrentLine: typeof import('./src/components/gantt/CurrentLine.vue')['default']
     GanttChart: typeof import('./src/components/gantt/GanttChart.vue')['default']
     GanttTable: typeof import('./src/components/gantt/GanttTable.vue')['default']
     GanttView: typeof import('./src/components/gantt/GanttView.vue')['default']

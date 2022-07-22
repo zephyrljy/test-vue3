@@ -38,7 +38,6 @@ const columns = computed(() => {
 
 <style scoped>
 .gantt-table {
-  width: 500px;
   flex: none;
 }
 </style>
